@@ -33,6 +33,7 @@ Your priorities are set by a quick **5-step vibe quiz**, and you can re-tune the
 - 🎧 **Audiobook & 📖 Reading modes** — audio scores narrator performance, reading scores prose quality; both coexist in one ranked list.
 - 🎲 **Vibe quiz** that sets your mood filters and quality weights via fast A/B questions.
 - 🤖 **AI scoring** with [Claude Haiku](https://www.anthropic.com/claude) — mood tags, quality scores with one-line reasons, and fit data inferred from the description.
+- 📥 **Batch shelf import** — paste or upload a Goodreads / StoryGraph CSV export and the whole shelf is searched, AI-scored, and ranked. StoryGraph's own mood/pace/content-warning data is used directly when present.
 - ✍️ **Manual entry & editing** for books you already know.
 - ⬇️ **Import / Export** your library as JSON.
 - 🌗 **Light / dark themes**, fully responsive.
@@ -82,7 +83,6 @@ python -m http.server 8000
 
 Ideas not yet built:
 
-- 📥 **Batch import** a Goodreads / StoryGraph "to-read" CSV and auto-tag the whole shelf.
 - ✏️ **Inline tag editing** — confirm or correct AI-guessed mood tags.
 - 🚫 **Content-warning filters** as hard exclusions.
 - 🔗 **"Find on Audible"** quick links per book.
@@ -91,4 +91,4 @@ Ideas not yet built:
 
 ## License
 
-[MIT](LICENSE) © Mazel Nabawy
+[MIT](LICENSE) © Mazen Elnabawy
