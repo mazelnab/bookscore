@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BookScore</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg1:#25003f;--bg2:#071b4f;--bg3:#01291f;--card:rgba(255,255,255,.12);--card2:rgba(255,255,255,.18);--text:#fffaf2;--muted:rgba(255,250,242,.74);--subtle:rgba(255,250,242,.52);--line:rgba(255,255,255,.22);--line2:rgba(255,255,255,.35);--hot:#ff4ecd;--sun:#ffd166;--blue:#4cc9f0;--green:#06d6a0;--orange:#ff8a00;--violet:#9b5cff;--shadow:0 24px 80px rgba(0,0,0,.32);--radius-xl:32px;--radius-lg:24px;--radius-md:18px;--radius-sm:12px;}
+[data-theme="light"]{--bg1:#fff0bc;--bg2:#ffc8dd;--bg3:#bde0fe;--card:rgba(255,255,255,.66);--card2:rgba(255,255,255,.86);--text:#20112f;--muted:rgba(32,17,47,.72);--subtle:rgba(32,17,47,.50);--line:rgba(32,17,47,.14);--line2:rgba(32,17,47,.24);--shadow:0 24px 70px rgba(92,41,140,.20);}
+*{box-sizing:border-box;margin:0;padding:0} html{scroll-behavior:smooth}
+body{min-height:100vh;color:var(--text);font-family:Inter,system-ui,sans-serif;padding:22px 14px 80px;overflow-x:hidden;background:radial-gradient(circle at 12% 8%,rgba(255,78,205,.55),transparent 30%),radial-gradient(circle at 88% 12%,rgba(76,201,240,.52),transparent 32%),radial-gradient(circle at 45% 92%,rgba(6,214,160,.38),transparent 36%),linear-gradient(135deg,var(--bg1),var(--bg2) 48%,var(--bg3));background-attachment:fixed;}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%),linear-gradient(-45deg,rgba(255,255,255,.12) 25%,transparent 25%);background-size:46px 46px;mask-image:linear-gradient(to bottom,#000,transparent 70%)}
+button,input,textarea,select{font:inherit} button{cursor:pointer;color:inherit}
+.app{max-width:1120px;margin:0 auto;position:relative;z-index:1}
+.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px;font-family:"Baloo 2",Inter,sans-serif;font-weight:800;font-size:1.5rem}
+.logo{width:48px;height:48px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--sun),var(--hot));box-shadow:0 12px 35px rgba(255,78,205,.35);transform:rotate(-6deg)}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill-btn,.icon-btn{border:1px solid var(--line);background:var(--card);backdrop-filter:blur(18px);border-radius:999px;padding:10px 15px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.12);transition:.16s transform,.16s background}
+.pill-btn:hover,.icon-btn:hover{transform:translateY(-2px);background:var(--card2)}
+.hero{display:grid;grid-template-columns:1.08fr .92fr;gap:22px;align-items:stretch;margin-bottom:22px}
+.hero-card,.panel,.modal-card{border:1px solid var(--line);background:var(--card);backdrop-filter:blur(22px);border-radius:var(--radius-xl);box-shadow:var(--shadow)}
+.hero-card{padding:38px;position:relative;overflow:hidden;min-height:350px}
+.hero-card:after{content:"🎧";position:absolute;right:20px;bottom:-42px;font-size:12rem;opacity:.13;transform:rotate(12deg)}
+.kicker{display:inline-flex;align-items:center;gap:8px;background:rgba(255,209,102,.18);border:1px solid rgba(255,209,102,.45);color:var(--sun);border-radius:999px;padding:8px 14px;font-weight:900;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:18px}
+h1{font-family:"Baloo 2",Inter,sans-serif;font-size:clamp(3rem,7vw,6.2rem);line-height:.86;letter-spacing:-.055em;margin-bottom:18px;text-shadow:0 8px 35px rgba(0,0,0,.18)}
+.gradient-text{background:linear-gradient(90deg,var(--sun),#fff,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:1.08rem;line-height:1.65;color:var(--muted);max-width:620px;margin-bottom:24px}
+.hero-buttons{display:flex;gap:12px;flex-wrap:wrap}
+.primary,.secondary,.danger,.tiny{border:none;border-radius:18px;padding:14px 20px;font-weight:900;transition:.16s transform,.16s filter;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.primary{background:linear-gradient(135deg,var(--hot),var(--orange));color:white;box-shadow:0 14px 35px rgba(255,78,205,.28)}
+.secondary{background:var(--card2);border:1px solid var(--line2);color:var(--text)}
+.danger{background:rgba(255,76,96,.15);border:1px solid rgba(255,76,96,.35);color:#ffb3c1}
+.tiny{padding:9px 12px;border-radius:12px;font-size:.82rem;background:var(--card2);border:1px solid var(--line);color:var(--text)}
+.primary:hover,.secondary:hover,.danger:hover,.tiny:hover{transform:translateY(-2px);filter:saturate(1.1)}
+.mode-card{padding:24px;display:flex;flex-direction:column;gap:16px}
+.section-title{font-family:"Baloo 2",Inter,sans-serif;font-weight:800;font-size:1.45rem;letter-spacing:-.02em;margin-bottom:4px}
+.section-sub{color:var(--muted);font-size:.94rem;line-height:1.5}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode-btn{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.08);padding:18px 14px;text-align:left;transition:.16s transform,.16s border,.16s background;min-height:120px}
+.mode-btn strong{display:block;font-family:"Baloo 2";font-size:1.35rem;line-height:1.1}.mode-btn span{display:block;color:var(--muted);font-size:.86rem;margin-top:6px;line-height:1.35}
+.mode-btn.active{background:linear-gradient(135deg,rgba(255,78,205,.34),rgba(76,201,240,.28));border-color:rgba(255,255,255,.58);box-shadow:0 16px 42px rgba(76,201,240,.17)}
+.main-grid{display:grid;grid-template-columns:390px 1fr;gap:22px;align-items:start}
+.panel{padding:22px;margin-bottom:18px}.panel-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.quiz-card{background:linear-gradient(135deg,rgba(255,209,102,.18),rgba(255,78,205,.13));border-color:rgba(255,209,102,.34)}
+.progress{height:9px;background:rgba(255,255,255,.16);border-radius:999px;overflow:hidden;margin:16px 0}.progress>div{height:100%;background:linear-gradient(90deg,var(--green),var(--sun),var(--hot));border-radius:999px;transition:.25s width}
+.quiz-q{font-family:"Baloo 2";font-weight:800;font-size:1.55rem;line-height:1.08;margin-bottom:15px}.choice-grid{display:grid;gap:12px}
+.choice{border:1px solid var(--line);background:rgba(255,255,255,.09);border-radius:22px;padding:16px;text-align:left;transition:.16s transform,.16s background,.16s border}
+.choice:hover{transform:translateY(-2px);background:rgba(255,255,255,.17);border-color:var(--line2)}.choice b{display:block;font-size:1rem;margin-bottom:5px}.choice span{color:var(--muted);font-size:.88rem;line-height:1.38}
+.weight-bars{display:grid;gap:10px}.weight-row{display:grid;grid-template-columns:130px 1fr 42px;gap:10px;align-items:center}.weight-label{font-weight:800;font-size:.82rem}.weight-val{text-align:right;font-weight:900;color:var(--sun)}
+.bar{height:12px;border-radius:999px;background:rgba(255,255,255,.13);overflow:hidden}.bar>div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--hot))}
+.search-box{display:grid;gap:10px}.input,.textarea,.select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.12);color:var(--text);border-radius:18px;padding:14px 15px;outline:none}.textarea{min-height:96px;resize:vertical}.input::placeholder,.textarea::placeholder{color:var(--subtle)}.input:focus,.textarea:focus{border-color:rgba(255,209,102,.62);box-shadow:0 0 0 4px rgba(255,209,102,.13)}
+.row{display:flex;gap:10px}.row>*{flex:1}.api-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.badge{border-radius:999px;padding:7px 10px;font-size:.75rem;font-weight:900;background:rgba(255,209,102,.18);color:var(--sun);border:1px solid rgba(255,209,102,.32)}.badge.good{background:rgba(6,214,160,.18);color:#7dffd6;border-color:rgba(6,214,160,.32)}.badge.bad{background:rgba(255,76,96,.16);color:#ffb3c1;border-color:rgba(255,76,96,.32)}
+.picker{border:1px solid var(--line);border-radius:24px;overflow:hidden;background:rgba(255,255,255,.10);margin-top:12px}.picker-head{padding:13px 15px;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;font-weight:900;border-bottom:1px solid var(--line)}
+.result{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:13px 15px;border-bottom:1px solid var(--line);transition:.14s background}.result:last-child{border-bottom:0}.result:hover{background:rgba(255,255,255,.14)}.thumb{width:48px;height:66px;object-fit:cover;border-radius:10px;background:rgba(255,255,255,.16)}.thumb.ph{display:grid;place-items:center;font-size:1.4rem}.r-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.r-meta{color:var(--muted);font-size:.83rem;margin-top:3px}.arrow{font-size:1.7rem;color:var(--sun)}
+.notice{padding:13px 15px;border-radius:18px;margin-bottom:14px;font-weight:800;display:flex;justify-content:space-between;gap:10px;align-items:center}.notice.error{background:rgba(255,76,96,.16);border:1px solid rgba(255,76,96,.32);color:#ffc0cb}.notice.ok{background:rgba(6,214,160,.16);border:1px solid rgba(6,214,160,.32);color:#a6ffe2}.notice button{background:none;border:0;font-weight:900}
+.loading{display:flex;gap:12px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.10);margin-bottom:14px}.spinner{width:28px;height:28px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:var(--sun);animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.list-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.list-head h2{font-family:"Baloo 2";font-size:2rem;line-height:1}.sort-note{color:var(--muted);font-size:.88rem}
+.empty{padding:54px 28px;text-align:center;border:1px dashed var(--line2);border-radius:var(--radius-xl);background:rgba(255,255,255,.07)}.empty .big{font-size:4rem;margin-bottom:10px}.empty h2{font-family:"Baloo 2";font-size:2rem;margin-bottom:5px}.empty p{color:var(--muted);line-height:1.5}
+.book-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;margin-bottom:16px;background:rgba(255,255,255,.12);box-shadow:0 18px 50px rgba(0,0,0,.18)}.book-card.top{border-width:2px;box-shadow:0 24px 75px rgba(255,78,205,.22)}
+.book-top{display:grid;grid-template-columns:auto 64px 1fr auto auto;gap:14px;align-items:center;padding:18px}.rank{width:44px;height:44px;border-radius:16px;display:grid;place-items:center;font-weight:1000;color:#1d1030;background:var(--sun);box-shadow:0 10px 28px rgba(255,209,102,.22)}.cover{width:64px;height:88px;border-radius:14px;object-fit:cover;background:rgba(255,255,255,.16)}.cover.ph{display:grid;place-items:center;font-size:1.8rem}.book-title{font-family:"Baloo 2";font-size:1.45rem;font-weight:800;line-height:1.05}.author{color:var(--muted);font-size:.9rem;margin-top:3px}.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.tag{font-size:.75rem;font-weight:900;border-radius:999px;padding:5px 9px;background:rgba(255,255,255,.13);border:1px solid var(--line)}.score{text-align:right}.score strong{display:block;font-family:"Baloo 2";font-size:2.15rem;line-height:.82}.score span{color:var(--subtle);font-size:.78rem;font-weight:900}.card-actions{display:flex;gap:7px}.card-icon{width:38px;height:38px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.10)}
+.score-strip{height:10px;background:rgba(255,255,255,.12);overflow:hidden}.score-strip>div{height:100%;background:linear-gradient(90deg,var(--green),var(--sun),var(--hot));transition:.35s width}
+.book-body{display:none;padding:18px;border-top:1px solid var(--line)}.book-card.open .book-body{display:block}.note{color:var(--muted);line-height:1.65;margin-bottom:16px}
+.vibe-section{margin-bottom:14px}.vibe-section h4{font-family:"Baloo 2";font-size:1.1rem;margin-bottom:8px}.mood-pills{display:flex;gap:6px;flex-wrap:wrap}.mood-pill{font-size:.82rem;font-weight:800;border-radius:999px;padding:5px 11px;background:rgba(255,255,255,.10);border:1px solid var(--line);display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:.15s}.mood-pill:hover{background:rgba(255,255,255,.20)}.mood-pill .ai-badge{font-size:.65rem;background:rgba(76,201,240,.25);color:#b3eaff;border-radius:6px;padding:1px 5px}.mood-pill.confirmed .ai-badge{background:rgba(6,214,160,.25);color:#a6ffe2}
+.sub-scores{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}.sub-score{font-size:.82rem;font-weight:800;border-radius:12px;padding:6px 10px;background:rgba(255,255,255,.10);border:1px solid var(--line)}.sub-score .label{color:var(--muted)}.sub-score .val{color:var(--sun)}
+.criteria{display:grid;gap:12px;margin-bottom:16px}.crit{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:18px;padding:12px}.crit-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:7px}.crit-name{font-weight:900}.crit-score{font-weight:1000;color:var(--sun)}.reason{color:var(--muted);font-size:.88rem;line-height:1.45;margin-top:7px}
+.warning-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.warning-pill{font-size:.75rem;font-weight:900;border-radius:999px;padding:4px 9px;background:rgba(255,76,96,.15);border:1px solid rgba(255,76,96,.30);color:#ffb3c1}
+.edit-tag{display:none;gap:6px;align-items:center;margin-top:6px}.edit-tag.open{display:flex}.edit-tag select{padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.12);color:var(--text);font-size:.85rem}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.54);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}.modal.open{display:flex}.modal-card{width:min(720px,100%);max-height:88vh;overflow:auto;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.x{border:0;background:rgba(255,255,255,.12);border-radius:14px;width:40px;height:40px;font-weight:1000}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid .full{grid-column:1/-1}.mini-label{font-size:.78rem;font-weight:900;color:var(--muted);margin:8px 0 5px;display:block}.footer-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:80}.confetti i{position:absolute;width:10px;height:16px;border-radius:4px;animation:fall 900ms ease-in forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+.filter-popover{position:absolute;top:56px;right:0;background:var(--card);backdrop-filter:blur(22px);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow);display:none;z-index:40;min-width:280px}.filter-popover.open{display:block}
+.mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.mood-grid button{font-size:.82rem;font-weight:800;border-radius:12px;padding:7px 5px;border:1px solid var(--line);background:rgba(255,255,255,.25);color:var(--text);transition:.15s}.mood-grid button:hover{background:rgba(255,255,255,.35)}.mood-grid button.on{background:linear-gradient(135deg,rgba(255,78,205,.4),rgba(76,201,240,.3));border-color:rgba(255,255,255,.5)}
+.pace-row{display:flex;gap:8px;margin:10px 0}.pace-row button{flex:1;font-size:.85rem;font-weight:800;border-radius:14px;padding:10px;border:1px solid var(--line);background:rgba(255,255,255,.25);color:var(--text);transition:.15s}.pace-row button.on{background:linear-gradient(135deg,rgba(255,78,205,.4),rgba(76,201,240,.3));border-color:rgba(255,255,255,.5)}
+.quiz-card .mood-grid button,.quiz-card .pace-row button{background:rgba(0,0,0,.4);border-color:rgba(0,0,0,.5);color:#fff}.quiz-card .mood-grid button:hover,.quiz-card .pace-row button:hover{background:rgba(0,0,0,.55)}.quiz-card .mood-grid button.on,.quiz-card .pace-row button.on{background:linear-gradient(135deg,rgba(255,78,205,.5),rgba(76,201,240,.4));border-color:rgba(255,255,255,.5);color:#fff}
+@media(max-width:900px){.hero,.main-grid{grid-template-columns:1fr}.hero-card{min-height:auto}.book-top{grid-template-columns:auto 54px 1fr auto}.cover{width:54px;height:76px}.card-actions{grid-column:1/-1;justify-content:flex-end}.score strong{font-size:1.75rem}}
+@media(max-width:560px){body{padding:12px 10px 60px}.topbar{align-items:flex-start}.hero-card,.panel{padding:18px;border-radius:24px}.mode-grid,.row,.form-grid{grid-template-columns:1fr;display:grid}.book-top{grid-template-columns:auto 1fr auto;gap:10px}.cover{display:none}.rank{width:36px;height:36px;border-radius:13px}.book-title{font-size:1.18rem}.score strong{font-size:1.45rem}.weight-row{grid-template-columns:1fr 1fr 38px}.mood-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="confetti" id="confetti"></div>
+<div class="app">
+<div class="topbar">
+<div class="brand"><div class="logo">📚</div><span>BookScore</span></div>
+<div class="top-actions">
+<button class="pill-btn" id="prefsBtn">⚙️ Preferences</button>
+<button class="pill-btn" id="themeBtn">🌞 Theme</button>
+<button class="pill-btn" id="exportBtn">⬇ Export</button>
+<button class="pill-btn" id="importBtn">⬆ Import</button>
+<button class="pill-btn" id="clearBtn">🧹 Clear</button>
+</div>
+</div>
+
+<section class="hero">
+<div class="hero-card">
+<div class="kicker">✨ Pick your next obsession</div>
+<h1>Find the book that fits your <span class="gradient-text">actual mood.</span></h1>
+<p>Not just "good books" — books that match what you need right now. Vibe, quality, and life-fit, scored together.</p>
+<div class="hero-buttons">
+<button class="primary" id="startQuizBtn">🎲 Take the vibe quiz</button>
+<button class="secondary" id="manualBtn">✍️ Add manually</button>
+</div>
+</div>
+<div class="panel mode-card">
+<div><div class="section-title">Choose the format</div><div class="section-sub">Audiobooks score narrator performance. Reading scores prose quality.</div></div>
+<div class="mode-grid">
+<button class="mode-btn active" data-mode="audio"><strong>🎧 Audiobook</strong><span>Narrator, acting, pacing, audio magic.</span></button>
+<button class="mode-btn" data-mode="reading"><strong>📖 Reading</strong><span>Page feel, voice, prose, readability.</span></button>
+</div>
+<div class="api-row">
+<input class="input" id="apiKey" type="password" placeholder="Claude API key (session only)" autocomplete="off" />
+<span class="badge" id="apiBadge">Not set</span>
+</div>
+<div class="api-row">
+<input class="input" id="gbKey" type="password" placeholder="Google Books API key (optional, saved locally)" autocomplete="off" />
+<span class="badge" id="gbBadge">Not set</span>
+</div>
+<div class="section-sub">Claude key is session-only. Your books and preferences are saved locally in this browser.</div>
+</div>
+</section>
+
+<main class="main-grid">
+<aside>
+<section class="panel quiz-card" id="quizPanel"></section>
+<section class="panel">
+<div class="panel-head"><div><div class="section-title">Quality weights</div><div class="section-sub">Set by your quiz answers. Retake quiz to change.</div></div></div>
+<div class="weight-bars" id="weightBars"></div>
+</section>
+</aside>
+
+<section>
+<section class="panel">
+<div class="panel-head"><div><div class="section-title">Search & score</div><div class="section-sub">Search by title. Add author if the title is messy or a series name.</div></div></div>
+<div class="search-box">
+<div class="row"><input class="input" id="searchInput" placeholder="Book title or series name..." /><button class="primary" id="searchBtn">Search</button></div>
+<input class="input" id="authorInput" placeholder="Author (optional)" />
+</div>
+<div id="pickerWrap"></div>
+</section>
+
+<div id="noticeWrap"></div>
+<div id="loadingWrap" style="display:none" class="loading"><div class="spinner"></div><div id="loadingText">Working...</div></div>
+
+<section class="list-head"><div><h2>Your ranked stack</h2><div class="sort-note" id="sortNote">No books yet.</div></div><button class="secondary" id="rescoreBtn">🔁 Re-rank</button></section>
+<section id="rankedList"></section>
+</section>
+</main>
+</div>
+
+<div class="modal" id="manualModal"><div class="modal-card">
+<div class="modal-head"><div><div class="section-title" id="manualTitle">Add a book manually</div><div class="section-sub">Useful when search is weird or you already know the scores.</div></div><button class="x" data-close="manualModal">✕</button></div>
+<div class="form-grid">
+<div><label class="mini-label">Title</label><input class="input" id="mTitle"></div>
+<div><label class="mini-label">Author</label><input class="input" id="mAuthor"></div>
+<div class="full"><label class="mini-label">Description / note</label><textarea class="textarea" id="mNote"></textarea></div>
+<div><label class="mini-label">Plot-driven narrative</label><input class="input" type="number" min="1" max="10" id="m_plot_driven" value="7"></div>
+<div><label class="mini-label">Character depth</label><input class="input" type="number" min="1" max="10" id="m_character_depth" value="7"></div>
+<div><label class="mini-label">Worldbuilding</label><input class="input" type="number" min="1" max="10" id="m_worldbuilding" value="7"></div>
+<div><label class="mini-label">Entertainment</label><input class="input" type="number" min="1" max="10" id="m_entertainment" value="7"></div>
+<div><label class="mini-label">Emotional resonance</label><input class="input" type="number" min="1" max="10" id="m_emotional_resonance" value="7"></div>
+<div class="full"><label class="mini-label" id="mFormatLabel">Narrator performance</label><input class="input" type="number" min="1" max="10" id="m_narration_or_prose" value="7"></div>
+</div>
+<div class="footer-actions"><button class="secondary" data-close="manualModal">Cancel</button><button class="primary" id="saveManualBtn">Add book</button></div>
+</div></div>
+
+<div class="modal" id="importModal"><div class="modal-card">
+<div class="modal-head"><div><div class="section-title">Import backup</div><div class="section-sub">Paste JSON exported from this app.</div></div><button class="x" data-close="importModal">✕</button></div>
+<textarea class="textarea" id="importText" style="min-height:220px" placeholder='{"books":[...]}'></textarea>
+<div class="footer-actions"><button class="secondary" data-close="importModal">Cancel</button><button class="primary" id="doImportBtn">Import</button></div>
+</div></div>
+
+<div class="modal" id="prefsModal"><div class="modal-card" style="width:min(520px,100%)">
+<div class="modal-head"><div><div class="section-title">Your preferences</div><div class="section-sub">What you want right now. Change anytime.</div></div><button class="x" data-close="prefsModal">✕</button></div>
+<div id="prefsForm"></div>
+<div class="footer-actions"><button class="secondary" data-close="prefsModal">Close</button><button class="primary" id="savePrefsBtn">Apply & re-rank</button></div>
+</div></div>
+
+<script>
+const STORAGE_KEY='bookscore-v2';
+const PALETTE=[['#ff4ecd','rgba(255,78,205,.17)'],['#ffd166','rgba(255,209,102,.17)'],['#4cc9f0','rgba(76,201,240,.17)'],['#06d6a0','rgba(6,214,160,.17)'],['#ff8a00','rgba(255,138,0,.17)'],['#9b5cff','rgba(155,92,255,.17)']];
+const ALL_MOODS=['Funny','Dark','Emotional','Hopeful','Mysterious','Romantic','Wholesome','Bleak','Inspiring','Cozy','Thrilling','Melancholy','Triumphant','Reflective','Lighthearted','Gritty','Tender','Epic'];
+const ALL_TONES=['Lighthearted','Serious','Philosophical','Escapist','Gritty'];
+const ALL_ARCS=['happy-ending','bittersweet','tragic','satisfying-closure','cliffhanger'];
+const ALL_WARNINGS=['violence','sexual-content','horror','grief','abuse','suicide','addiction','war'];
+const PACE_OPTIONS=[{k:'slow-burn',label:'🐢 Slow-burn'},{k:'medium',label:'🚶 Medium'},{k:'fast-paced',label:'🏃 Fast-paced'},{k:'no-preference',label:'🤷 No preference'}];
+const TIME_OPTIONS=[{k:'weekend',label:'Weekend (~8 hrs)'},{k:'week',label:'Week (~20 hrs)'},{k:'epic',label:'Epic (40+ hrs)'},{k:'no-limit',label:'No limit'}];
+const SERIES_OPTIONS=[{k:'standalone',label:'Standalone only'},{k:'new-series',label:'Start new series'},{k:'continuing',label:'Continuing series'},{k:'dont-care',label:"Don't care"}];
+const DIFF_OPTIONS=[{k:'accessible',label:'Accessible'},{k:'literary',label:'Literary'},{k:'dense',label:'Dense'},{k:'no-preference',label:'No preference'}];
+const NARRATOR_OPTIONS=[{k:'male',label:'Male'},{k:'female',label:'Female'},{k:'full-cast',label:'Full cast'},{k:'no-preference',label:'No preference'}];
+const SOUND_OPTIONS=[{k:'yes',label:'Yes please'},{k:'no',label:'No thanks'},{k:'dont-care',label:"Don't care"}];
+const QUALITY_KEYS=['plot_driven','character_depth','worldbuilding','narration_or_prose','entertainment','emotional_resonance'];
+const QUALITY_LABELS={plot_driven:'Plot-driven narrative',character_depth:'Character depth',worldbuilding:'Worldbuilding',narration_or_prose:'Narration / Prose',entertainment:'Entertainment',emotional_resonance:'Emotional resonance'};
+const MODES={audio:{icon:'🎧',label:'Audiobook',format:'audiobook',slot5label:'Narrator performance',system:'You are an expert audiobook analyst. Return only valid JSON with no markdown fences.',commitDesc:'For a listener with 3-4 Audible credits. 1 book=10, trilogy=7-8, 5+ books=4-5.'},reading:{icon:'📖',label:'Reading',format:'book',slot5label:'Prose quality',system:'You are an expert book analyst for physical and ebook readers. Return only valid JSON with no markdown fences.',commitDesc:'For a reader with 3-4 books in their queue. 1 book=10, trilogy=7-8, 5+ books=4-5.'}};
+const DEFAULT_QUALITY_WEIGHTS={plot_driven:25,character_depth:20,worldbuilding:15,narration_or_prose:15,entertainment:15,emotional_resonance:10};
+const DEFAULT_PREFS={selected_moods:[],avoided_moods:[],pace_filter:'no-preference',time_budget:'no-limit',series_pref:'dont-care',difficulty_pref:'no-preference',narrator_pref:'no-preference',sound_effects:'dont-care',session_length:'no-preference',quality_weights:{...DEFAULT_QUALITY_WEIGHTS}};
+const QUIZ_STEPS=5;
+let state={books:[],prefs:{...DEFAULT_PREFS},mode:'audio',theme:'dark',gbKey:'',quizDone:false};
+let quizStep=0,quizQWeights={...DEFAULT_QUALITY_WEIGHTS},searchCache=[],editingId=null;
+const $=id=>document.getElementById(id);
+function esc(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function clamp(n,min=1,max=10){n=Number(n);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):min;}
+function normalizeQualityWeights(w){let out={...DEFAULT_QUALITY_WEIGHTS,...w};QUALITY_KEYS.forEach(k=>out[k]=Math.max(0,Math.round(Number(out[k])||0)));let sum=QUALITY_KEYS.reduce((s,k)=>s+out[k],0)||1;let assigned=0;QUALITY_KEYS.forEach((k,i)=>{if(i===QUALITY_KEYS.length-1)out[k]=100-assigned;else{out[k]=Math.round(out[k]*100/sum);assigned+=out[k];}});return out;}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify({version:2,books:state.books,prefs:state.prefs,mode:state.mode,theme:state.theme,gbKey:state.gbKey,quizDone:state.quizDone}));}
+function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const data=JSON.parse(raw);const looksV1=Array.isArray(data.books)&&data.books.some(b=>b&&b.criteria&&!b.layer_1_vibe);state={...state,...data};if(looksV1)migrateV1();state.prefs={...DEFAULT_PREFS,...state.prefs};state.prefs.quality_weights=normalizeQualityWeights(state.prefs.quality_weights);}catch(e){console.error('load error',e);}document.documentElement.dataset.theme=state.theme==='light'?'light':'dark';$('gbKey').value=state.gbKey||'';updateGbBadge();}
+function migrateV1(){const oldBooks=state.books||[];state.books=oldBooks.map(b=>{const oldCrit=b.criteria||{};const oldScore=clamp(oldCrit.plot_driven?.score||7);return{...b,layer_1_vibe:{mood_tags:[],pace_tag:'',tone_tags:[],emotional_arc:'',tag_source:'v1-migrated'},layer_2_quality:{plot_driven:oldScore,character_depth:clamp(Math.round(oldScore*0.9)),worldbuilding:clamp(Math.round(oldScore*0.85)),narration_or_prose:clamp(oldCrit.narrator_performance?.score||oldCrit.prose_quality?.score||7),entertainment:clamp(oldCrit.entertainment?.score||7),emotional_resonance:clamp(Math.round((oldCrit.entertainment?.score||7)*0.9)),score_source:'v1-migrated'},layer_3_fit:{length_hours:b.length_hours||'',length_pages:b.pages||'',series_position:b.series_position||'unknown',difficulty:'unknown',content_warnings:[],audiobook_specific:{narrator:b.narrator||'',narrator_gender:'',full_cast:false,production_quality:0}},composite_rank:0,sub_scores:{vibe_match:0,quality:0,fit:0}};});state.quizDone=false;notify('Your library has been upgraded to V2. Mood tags are empty — search new books to auto-populate.','ok');}
+function notify(msg,type='error'){$('noticeWrap').innerHTML=`<div class="notice ${type}"><span>${esc(msg)}</span><button onclick="$('noticeWrap').innerHTML=''">✕</button></div>`;}
+function setLoading(on,msg='Working...'){$('loadingWrap').style.display=on?'flex':'none';$('loadingText').textContent=msg;}
+function updateGbBadge(){const v=$('gbKey').value.trim();$('gbBadge').className='badge '+(!v?'':v.length>20?'good':'bad');$('gbBadge').textContent=!v?'Not set':v.length>20?'Set ✓':'Check key';}
+function confettiAnim(){const wrap=$('confetti'),colors=['#ff4ecd','#ffd166','#4cc9f0','#06d6a0','#ff8a00','#9b5cff'];wrap.innerHTML='';for(let i=0;i<40;i++){const el=document.createElement('i');el.style.left=Math.random()*100+'%';el.style.top='-30px';el.style.background=colors[i%colors.length];el.style.animationDelay=Math.random()*220+'ms';el.style.transform=`rotate(${Math.random()*180}deg)`;wrap.appendChild(el);}setTimeout(()=>wrap.innerHTML='',1300);}
+
+function calcVibeMatch(book){const v=book.layer_1_vibe||{};if(state.prefs.avoided_moods?.length){const hasAvoided=(v.mood_tags||[]).some(t=>state.prefs.avoided_moods.includes(t));if(hasAvoided)return 0;}if(state.prefs.pace_filter!=='no-preference'&&v.pace_tag&&v.pace_tag!==state.prefs.pace_filter)return 0;if(!state.prefs.selected_moods?.length)return 100;const matches=(v.mood_tags||[]).filter(t=>state.prefs.selected_moods.includes(t)).length;return Math.round((matches/Math.max(1,state.prefs.selected_moods.length))*100);}
+function calcQualityScore(book){const q=book.layer_2_quality||{};const w=state.prefs.quality_weights||DEFAULT_QUALITY_WEIGHTS;const totalWeight=QUALITY_KEYS.reduce((s,k)=>s+w[k],0)||1;let sum=0;for(const k of QUALITY_KEYS){sum+=(clamp(q[k]))*(w[k]||0)/totalWeight;}return parseFloat(sum.toFixed(2));}
+function calcFitScore(book){const f=book.layer_3_fit||{};const scores=[];if(state.prefs.time_budget!=='no-limit'){const hours=f.length_hours||estimateHours(f.length_pages);const budget={weekend:8,week:20,epic:999}[state.prefs.time_budget];if(budget&&hours){const s=hours<=budget?100:Math.max(0,100-((hours-budget)/budget*50));scores.push(s);}}if(state.prefs.series_pref!=='dont-care'&&f.series_position){const map={standalone:{standalone:100,'book_1_of_N':30,'book_M_of_N':10},'new-series':{standalone:80,'book_1_of_N':100,'book_M_of_N':10},continuing:{standalone:20,'book_1_of_N':50,'book_M_of_N':100}};const s=map[state.prefs.series_pref]?.[f.series_position]||50;scores.push(s);}if(state.prefs.difficulty_pref!=='no-preference'&&f.difficulty){scores.push(f.difficulty===state.prefs.difficulty_pref?100:50);}if(book.mode==='audio'&&state.prefs.narrator_pref!=='no-preference'){const g=f.audiobook_specific?.narrator_gender||'';scores.push(g===state.prefs.narrator_pref?100:60);}return scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):100;}
+function estimateHours(pages){const p=Number(pages);if(!p||!Number.isFinite(p))return 0;return Math.round(p/40*10)/10;}
+function calcCompositeRank(book){const vibe=calcVibeMatch(book);const quality=calcQualityScore(book);const fit=calcFitScore(book);book.sub_scores={vibe_match:vibe,quality,fit};if(vibe===0){book.composite_rank=0;return 0;}const rank=(vibe*0.35)+(quality*10*0.40)+(fit*0.25);book.composite_rank=parseFloat(rank.toFixed(1));return book.composite_rank;}
+function recalcAll(doSave=true){state.books.forEach(b=>calcCompositeRank(b));state.books.sort((a,b)=>b.composite_rank-a.composite_rank);renderList();renderWeights();if(doSave)save();}
+
+function renderAll(){renderMode();renderQuiz();renderWeights();renderList();save();}
+function renderMode(){document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));$('mFormatLabel').textContent=MODES[state.mode].slot5label;}
+function renderWeights(){const w=state.prefs.quality_weights;$('weightBars').innerHTML=QUALITY_KEYS.map(k=>`<div class="weight-row"><div class="weight-label">${esc(QUALITY_LABELS[k])}</div><div class="bar"><div style="width:${w[k]}%"></div></div><div class="weight-val">${w[k]}%</div></div>`).join('');}
+
+function renderQuiz(){const p=$('quizPanel');if(state.quizDone){p.innerHTML=`<div class="panel-head"><div><div class="section-title">Vibe quiz complete 🎉</div><div class="section-sub">Your preferences are set. Retake it anytime if your mood changes.</div></div></div><button class="primary" id="retakeQuizBtn">Retake quiz</button>`;$('retakeQuizBtn').onclick=startQuiz;return;}if(!quizQWeights)quizQWeights={...DEFAULT_QUALITY_WEIGHTS};const pct=(quizStep/QUIZ_STEPS)*100;let html=`<div class="section-title">Vibe quiz</div><div class="section-sub">Step ${quizStep+1} of ${QUIZ_STEPS}. Pick fast. Gut feeling wins.</div><div class="progress"><div style="width:${pct}%"></div></div>`;
+if(quizStep===0){
+html+=`<div class="quiz-q">What mood are you craving?</div><div class="mood-grid">${ALL_MOODS.map(m=>`<button class="${state.prefs.selected_moods.includes(m)?'on':''}" data-mood="${esc(m)}">${esc(m)}</button>`).join('')}</div><div class="section-sub" style="margin-top:12px">Any moods to avoid?</div><div class="mood-grid">${ALL_MOODS.map(m=>`<button class="${state.prefs.avoided_moods.includes(m)?'on':''}" data-avoid="${esc(m)}">${esc(m)}</button>`).join('')}</div><div style="margin-top:14px"><button class="primary" id="quizNext1" ${state.prefs.selected_moods.length?'':'disabled'}>Next →</button></div>`;
+}else if(quizStep===1){
+html+=`<div class="quiz-q">What pace do you want?</div><div class="pace-row">${PACE_OPTIONS.map(o=>`<button class="${state.prefs.pace_filter===o.k?'on':''}" data-pace="${o.k}">${o.label}</button>`).join('')}</div><div style="margin-top:14px"><button class="secondary" id="quizBack1">← Back</button><button class="primary" id="quizNext2">Next →</button></div>`;
+}else if(quizStep===2){
+html+=`<div class="quiz-q">How much time do you have?</div><div class="pace-row">${TIME_OPTIONS.map(o=>`<button class="${state.prefs.time_budget===o.k?'on':''}" data-time="${o.k}">${esc(o.label)}</button>`).join('')}</div><div class="quiz-q" style="margin-top:18px">Series preference?</div><div class="pace-row">${SERIES_OPTIONS.map(o=>`<button class="${state.prefs.series_pref===o.k?'on':''}" data-series="${o.k}">${esc(o.label)}</button>`).join('')}</div><div style="margin-top:14px"><button class="secondary" id="quizBack2">← Back</button><button class="primary" id="quizNext3">Next →</button></div>`;
+}else if(quizStep===3){
+const q=QUALITY_AB_QUESTIONS[quizABIndex];html+=`<div class="quiz-q">${esc(q.q)}</div><div class="choice-grid"><button class="choice" data-ab="a"><b>${esc(q.a.label)}</b><span>${esc(q.a.sub)}</span></button><button class="choice" data-ab="b"><b>${esc(q.b.label)}</b><span>${esc(q.b.sub)}</span></button></div><div style="margin-top:14px"><button class="secondary" id="quizBack3">← Back</button></div>`;
+}else if(quizStep===4){
+html+=`<div class="quiz-q">Any audiobook preferences?</div><div class="section-sub">Narrator gender</div><div class="pace-row">${NARRATOR_OPTIONS.map(o=>`<button class="${state.prefs.narrator_pref===o.k?'on':''}" data-narrator="${o.k}">${esc(o.label)}</button>`).join('')}</div><div class="section-sub" style="margin-top:10px">Sound effects / music</div><div class="pace-row">${SOUND_OPTIONS.map(o=>`<button class="${state.prefs.sound_effects===o.k?'on':''}" data-sound="${o.k}">${esc(o.label)}</button>`).join('')}</div><div style="margin-top:14px"><button class="secondary" id="quizBack4">← Back</button><button class="primary" id="finishQuiz">Finish 🎉</button></div>`;
+}
+p.innerHTML=html;attachQuizListeners();}
+let quizABIndex=0;
+const QUALITY_AB_QUESTIONS=[
+{q:'What matters more to you right now?',a:{label:'🎭 Characters that feel real',sub:'I want to care about the people in the story.',weights:{plot_driven:-3,character_depth:+5,emotional_resonance:+3}},b:{label:'🌪️ Plot twists that keep me guessing',sub:'I want to be surprised and unable to stop.',weights:{plot_driven:+5,character_depth:-2,worldbuilding:+2}}},
+{q:'What reading/listening experience do you want?',a:{label:'🏰 Get lost in the world',sub:'Rich setting, immersive details, atmosphere.',weights:{worldbuilding:+6,plot_driven:+2}},b:{label:'🎢 Just entertain me',sub:'Fun, fast, addictive — no homework required.',weights:{entertainment:+6,worldbuilding:-2}}},
+{q:'How do you want the story to hit you?',a:{label:'💔 Make me feel everything',sub:'Tears, joy, heartbreak, catharsis.',weights:{emotional_resonance:+6,entertainment:+2}},b:{label:'🧠 Keep me sharp',sub:'Clever, thought-provoking, layered.',weights:{emotional_resonance:-2,plot_driven:+3,worldbuilding:+3}}},
+{q:'What can make or break the experience?',a:{label:'🎙️ The voice / narration',sub:'Great narrator or beautiful prose.',weights:{narration_or_prose:+6,character_depth:+2}},b:{label:'📖 The story itself',sub:'I can forgive average style if the story slaps.',weights:{narration_or_prose:-3,plot_driven:+4,entertainment:+3}}}
+];
+function attachQuizListeners(){
+const p=$('quizPanel');
+if(quizStep===0){
+p.querySelectorAll('[data-mood]').forEach(b=>b.onclick=()=>{const m=b.dataset.mood;const arr=state.prefs.selected_moods;const i=arr.indexOf(m);if(i>-1)arr.splice(i,1);else{if(arr.length>=3)arr.shift();arr.push(m);}save();renderQuiz();});
+p.querySelectorAll('[data-avoid]').forEach(b=>b.onclick=()=>{const m=b.dataset.avoid;const arr=state.prefs.avoided_moods;const i=arr.indexOf(m);if(i>-1)arr.splice(i,1);else arr.push(m);save();renderQuiz();});
+const next=$('quizNext1');if(next)next.onclick=()=>{quizStep++;renderQuiz();};
+}else if(quizStep===1){
+p.querySelectorAll('[data-pace]').forEach(b=>b.onclick=()=>{state.prefs.pace_filter=b.dataset.pace;save();renderQuiz();});
+$('quizBack1').onclick=()=>{quizStep--;renderQuiz();};
+$('quizNext2').onclick=()=>{quizStep++;renderQuiz();};
+}else if(quizStep===2){
+p.querySelectorAll('[data-time]').forEach(b=>b.onclick=()=>{state.prefs.time_budget=b.dataset.time;save();renderQuiz();});
+p.querySelectorAll('[data-series]').forEach(b=>b.onclick=()=>{state.prefs.series_pref=b.dataset.series;save();renderQuiz();});
+$('quizBack2').onclick=()=>{quizStep--;renderQuiz();};
+$('quizNext3').onclick=()=>{quizStep++;quizABIndex=0;renderQuiz();};
+}else if(quizStep===3){
+p.querySelectorAll('[data-ab]').forEach(b=>b.onclick=()=>{const delta=QUALITY_AB_QUESTIONS[quizABIndex][b.dataset.ab==='a'?'a':'b'].weights;Object.entries(delta).forEach(([k,v])=>quizQWeights[k]=(quizQWeights[k]||0)+v);quizABIndex++;if(quizABIndex>=QUALITY_AB_QUESTIONS.length){state.prefs.quality_weights=normalizeQualityWeights(quizQWeights);quizStep++;renderQuiz();}else renderQuiz();});
+$('quizBack3').onclick=()=>{if(quizABIndex>0){quizABIndex--;}else{quizStep--;quizABIndex=0;}renderQuiz();};
+}else if(quizStep===4){
+p.querySelectorAll('[data-narrator]').forEach(b=>b.onclick=()=>{state.prefs.narrator_pref=b.dataset.narrator;save();renderQuiz();});
+p.querySelectorAll('[data-sound]').forEach(b=>b.onclick=()=>{state.prefs.sound_effects=b.dataset.sound;save();renderQuiz();});
+$('quizBack4').onclick=()=>{quizStep=3;quizABIndex=QUALITY_AB_QUESTIONS.length-1;renderQuiz();};
+$('finishQuiz').onclick=()=>{state.quizDone=true;quizQWeights=null;confettiAnim();renderAll();};
+}
+}
+function startQuiz(){state.quizDone=false;quizStep=0;quizQWeights={...DEFAULT_QUALITY_WEIGHTS};quizABIndex=0;renderQuiz();}
+
+function renderList(){const list=$('rankedList');$('sortNote').textContent=state.books.length?`${state.books.length} book${state.books.length>1?'s':''}, ranked by vibe + quality + fit.`:'No books yet.';if(!state.books.length){list.innerHTML=`<div class="empty"><div class="big">🎪</div><h2>Your stack is empty</h2><p>Search a book, add one manually, or import a backup.</p></div>`;return;}list.innerHTML=state.books.map((b,i)=>renderCard(b,i)).join('');}
+function renderCard(book,rank){const color=book.color||PALETTE[rank%PALETTE.length][0],bg=book.bg||PALETTE[rank%PALETTE.length][1],top=rank===0;const thumb=book.thumb?`<img class="cover" src="${esc(book.thumb)}" alt="">`:`<div class="cover ph">${MODES[book.mode]?.icon||'📚'}</div>`;const v=book.layer_1_vibe||{};const moods=(v.mood_tags||[]).map(t=>`<span class="mood-pill">${esc(t)}${v.tag_source==='claude-inferred'?'<span class="ai-badge">AI</span>':''}</span>`).join('')||'<span style="color:var(--subtle);font-size:.85rem">No mood tags</span>';const warnings=(book.layer_3_fit?.content_warnings||[]).map(w=>`<span class="warning-pill">${esc(w)}</span>`).join('');return `<article class="book-card ${top?'top':''}" data-id="${esc(book.id)}" style="background:linear-gradient(135deg,${bg},rgba(255,255,255,.08));border-color:${top?color:'var(--line)'}"><div class="book-top"><div class="rank" style="background:${color}">${rank+1}</div>${thumb}<div><div class="book-title">${esc(book.title)} ${top?'<span class="tag">🏆 Top Pick</span>':''}</div><div class="author">${esc(book.author||'Unknown author')}</div><div class="sub-scores"><span class="sub-score"><span class="label">Vibe</span> <span class="val">${book.sub_scores?.vibe_match??0}%</span></span><span class="sub-score"><span class="label">Quality</span> <span class="val">${book.sub_scores?.quality??0}</span></span><span class="sub-score"><span class="label">Fit</span> <span class="val">${book.sub_scores?.fit??0}%</span></span></div><div class="tags" style="margin-top:6px">${(v.mood_tags||[]).slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div><div class="score"><strong style="color:${color}">${book.composite_rank?.toFixed(1)??'0.0'}</strong><span>/100</span></div><div class="card-actions"><button class="card-icon" data-action="toggle" title="Open">⌄</button><button class="card-icon" data-action="edit" title="Edit scores">✏️</button><button class="card-icon" data-action="remove" title="Remove">✕</button></div></div><div class="score-strip"><div style="width:${Math.min(100,Math.round((book.composite_rank||0)))}%"></div></div><div class="book-body"><div class="vibe-section"><h4>Mood & Vibe</h4><div class="mood-pills">${moods}</div><div style="margin-top:6px;color:var(--subtle);font-size:.85rem">Pace: ${esc(v.pace_tag||'unknown')} · Tone: ${esc((v.tone_tags||[]).join(', ')||'unknown')} · Arc: ${esc(v.emotional_arc||'unknown')}</div></div><div class="criteria">${renderQualityCrits(book,color)}</div>${warnings?`<div style="margin-top:8px"><strong style="color:var(--subtle);font-size:.85rem">Content warnings:</strong><div class="warning-pills">${warnings}</div></div>`:''}${book.note?`<div class="note">${esc(book.note)}</div>`:''}<div class="footer-actions" style="justify-content:flex-start"><button class="secondary" data-action="duplicate">Duplicate</button></div></div></article>`;}
+function renderQualityCrits(book,color){const q=book.layer_2_quality||{};const w=state.prefs.quality_weights;return QUALITY_KEYS.map(k=>{const s=clamp(q[k]);const r=book.reasons?.[k];return `<div class="crit"><div class="crit-head"><span class="crit-name">${esc(QUALITY_LABELS[k])} <span style="color:var(--subtle)">(${w[k]}%)</span></span><span class="crit-score" style="color:${color}">${s}/10</span></div><div class="bar"><div style="width:${s*10}%;background:${color}"></div></div>${r?`<div class="reason">${esc(r)}</div>`:''}</div>`;}).join('');}
+
+async function doSearch(){const title=$('searchInput').value.trim(),author=$('authorInput').value.trim();if(!title)return;setLoading(true,'Searching editions...');$('pickerWrap').innerHTML='';$('noticeWrap').innerHTML='';try{let raw=[];if(state.mode==='audio')raw=await fetchAudiobooks(title,author);else{const queries=[`intitle:${title}`+(author?` inauthor:${author}`:''),title+(author?` ${author}`:''),title];for(const q of queries){raw=await fetchGoogleBooks(q);if(raw.length)break;}}if(!raw.length){notify("No results found. Try adding the author or the first book's exact title.");return;}searchCache=raw.map(x=>normalizeItem(x,state.mode));renderPicker();}catch(e){const msg=String(e.message||e);if(msg.includes('quota')||msg.includes('rate')||msg.includes('limit')){notify('Google Books daily quota reached. Try again tomorrow, or use a Google Books API key in settings.');}else{notify(msg||'Search failed. Check connection or API availability.');}}finally{setLoading(false);}}
+async function fetchAudiobooks(title,author){const term=author?`${title} ${author}`:title;const r=await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=audiobook&limit=8`);const d=await r.json();return(d.results||[]).filter(x=>x.collectionId);}
+async function fetchGoogleBooks(q){const key=state.gbKey?.trim();const url=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8${key?'&key='+encodeURIComponent(key):''}`;const r=await fetch(url);const d=await r.json();if(!r.ok||d.error){const msg=d?.error?.message||`Google Books error ${r.status}`;throw new Error(msg);}return d.items||[];}
+function normalizeItem(item,mode){if(mode==='audio')return{id:'itunes_'+item.collectionId,title:item.collectionName||'Unknown',author:item.artistName||'Unknown',description:item.description||'',categories:item.primaryGenreName||'',thumb:(item.artworkUrl100||'').replace('100x100bb','600x600bb'),rating:'N/A',pages:'N/A',year:(item.releaseDate||'').slice(0,4),mode};const v=item.volumeInfo||{};return{id:'gb_'+item.id,title:v.title||'Unknown',author:(v.authors||[]).join(', ')||'Unknown',description:v.description||'',categories:(v.categories||[]).join(', '),thumb:(v.imageLinks?.thumbnail||'').replace('http:','https:'),rating:v.averageRating||'N/A',pages:v.pageCount||'N/A',year:(v.publishedDate||'').slice(0,4),mode};}
+function renderPicker(){$('pickerWrap').innerHTML=`<div class="picker"><div class="picker-head">Pick the right edition</div>${searchCache.map((it,i)=>`<button class="result" data-pick="${i}">${it.thumb?`<img class="thumb" src="${esc(it.thumb)}" alt="">`:`<div class="thumb ph">📚</div>`}<div><div class="r-title">${esc(it.title)}</div><div class="r-meta">${esc(it.author)} ${it.year?'• '+esc(it.year):''}</div></div><div class="arrow">›</div></button>`).join('')}</div>`;document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>pickBook(+b.dataset.pick));}
+async function pickBook(i){const norm=searchCache[i];if(!norm)return;if(state.books.some(b=>b.id===norm.id)){notify('This book is already in your list.');return;}if(!$('apiKey').value.trim()){notify('Enter your Claude API key first. It stays session-only.');return;}$('pickerWrap').innerHTML='';$('searchInput').value='';setLoading(true,`Scoring "${norm.title}"...`);try{const scored=await scoreWithClaude(norm);addBook({...norm,...scored});confettiAnim();notify(`Added "${norm.title}".`,'ok');}catch(e){notify(e.message||'Scoring failed. Try again.');}finally{setLoading(false);}}
+async function scoreWithClaude(norm){const mode=MODES[state.mode];const k5=state.mode==='audio'?'narrator_performance':'prose_quality';const fitExtra=state.mode==='audio'?'"length_hours": estimated total audiobook runtime in hours as a number,\n    "narrator_gender": "male OR female OR full-cast OR unknown",':'"length_pages": approximate total page count as a number,';const prompt=`Analyze this ${mode.format} and return ONLY valid JSON with no markdown.
+
+Title: ${norm.title}
+Author: ${norm.author}
+Description: ${norm.description||'(not available)'}
+Genre: ${norm.categories||'unknown'}
+${norm.rating!=='N/A'?`Avg rating: ${norm.rating}`:''}
+${norm.pages!=='N/A'?`Pages: ${norm.pages}`:''}
+
+Return EXACTLY this JSON shape:
+{
+  "layer_1_vibe": {
+    "mood_tags": ["pick 2-5 from: Funny,Dark,Emotional,Hopeful,Mysterious,Romantic,Wholesome,Bleak,Inspiring,Cozy,Thrilling,Melancholy,Triumphant,Reflective,Lighthearted,Gritty,Tender,Epic"],
+    "pace_tag": "slow-burn OR medium OR fast-paced",
+    "tone_tags": ["pick 1-3 from: Lighthearted,Serious,Philosophical,Escapist,Gritty"],
+    "emotional_arc": "happy-ending OR bittersweet OR tragic OR satisfying-closure OR cliffhanger"
+  },
+  "layer_2_quality": {
+    "plot_driven": {"score":1-10,"reason":"one sentence"},
+    "character_depth": {"score":1-10,"reason":"one sentence"},
+    "worldbuilding": {"score":1-10,"reason":"one sentence"},
+    "${k5}": {"score":1-10,"reason":"one sentence"},
+    "entertainment": {"score":1-10,"reason":"one sentence"},
+    "emotional_resonance": {"score":1-10,"reason":"one sentence"}
+  },
+  "layer_3_fit": {
+    ${fitExtra}
+    "series_position": "standalone OR book_1_of_N OR book_M_of_N OR unknown",
+    "difficulty": "accessible OR literary OR dense OR unknown",
+    "content_warnings": ["pick any from: violence,sexual-content,horror,grief,abuse,suicide,addiction,war"]
+  },
+  "overall_note": "2-3 sentence summary"
+}`;
+const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),35000);let res;try{res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json','x-api-key':$('apiKey').value.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1200,system:mode.system,messages:[{role:'user',content:prompt}]})});}finally{clearTimeout(timeout);}if(!res.ok){const err=await res.json().catch(()=>({}));if(res.status===401)throw new Error('Invalid API key.');if(res.status===429)throw new Error('Rate limited — wait a moment and try again.');throw new Error(err.error?.message||`API error ${res.status}`);}const data=await res.json();let raw=(data.content?.[0]?.text||'').trim().replace(/^\`\`\`json\s*/i,'').replace(/^\`\`\`\s*/i,'').replace(/\`\`\`\s*$/i,'').trim();let parsed;try{parsed=JSON.parse(raw);}catch{throw new Error('Scoring returned invalid JSON. Try again.');}
+if(!parsed.layer_1_vibe||!parsed.layer_2_quality)throw new Error('Incomplete scoring response. Try again.');
+const pf=parsed.layer_3_fit||{};
+const out={layer_1_vibe:{mood_tags:(parsed.layer_1_vibe.mood_tags||[]).filter(t=>ALL_MOODS.includes(t)),pace_tag:PACE_OPTIONS.some(p=>p.k===parsed.layer_1_vibe.pace_tag)?parsed.layer_1_vibe.pace_tag:'',tone_tags:(parsed.layer_1_vibe.tone_tags||[]).filter(t=>ALL_TONES.includes(t)),emotional_arc:ALL_ARCS.includes(parsed.layer_1_vibe.emotional_arc)?parsed.layer_1_vibe.emotional_arc:'',tag_source:'claude-inferred'},layer_2_quality:{},reasons:{},layer_3_fit:{length_hours:state.mode==='audio'?(Number(pf.length_hours)||''):'',length_pages:state.mode==='reading'?(Number(norm.pages)||Number(pf.length_pages)||''):'',series_position:pf.series_position||'unknown',difficulty:pf.difficulty||'unknown',content_warnings:(pf.content_warnings||[]).filter(w=>ALL_WARNINGS.includes(w)),audiobook_specific:{narrator:'',narrator_gender:state.mode==='audio'?(pf.narrator_gender||''):'',full_cast:pf.narrator_gender==='full-cast',production_quality:0}},note:String(parsed.overall_note||'')};QUALITY_KEYS.forEach(k=>{const srcKey=k==='narration_or_prose'?k5:k;const entry=parsed.layer_2_quality[srcKey];out.layer_2_quality[k]=clamp(entry?.score);if(entry&&entry.reason)out.reasons[k]=String(entry.reason);});out.layer_2_quality.score_source='claude';return out;}
+function addBook(book){const idx=state.books.length%PALETTE.length;book.id=book.id||('manual_'+Date.now());book.mode=book.mode||state.mode;book.color=book.color||PALETTE[idx][0];book.bg=book.bg||PALETTE[idx][1];calcCompositeRank(book);state.books.push(book);recalcAll();}
+function openManual(editId=null){editingId=editId;const book=state.books.find(b=>b.id===editId);$('manualTitle').textContent=book?'Edit book':'Add a book manually';$('saveManualBtn').textContent=book?'Save changes':'Add book';$('mTitle').value=book?.title||'';$('mAuthor').value=book?.author||'';$('mNote').value=book?.note||'';const q=book?.layer_2_quality||{};$('m_plot_driven').value=clamp(q.plot_driven);$('m_character_depth').value=clamp(q.character_depth);$('m_worldbuilding').value=clamp(q.worldbuilding);$('m_entertainment').value=clamp(q.entertainment);$('m_emotional_resonance').value=clamp(q.emotional_resonance);$('m_narration_or_prose').value=clamp(q.narration_or_prose);$('mFormatLabel').textContent=MODES[book?.mode||state.mode].slot5label;openModal('manualModal');}
+function saveManual(){const title=$('mTitle').value.trim();if(!title){notify('Manual book needs a title.');return;}const q={plot_driven:clamp($('m_plot_driven').value),character_depth:clamp($('m_character_depth').value),worldbuilding:clamp($('m_worldbuilding').value),entertainment:clamp($('m_entertainment').value),emotional_resonance:clamp($('m_emotional_resonance').value),narration_or_prose:clamp($('m_narration_or_prose').value),score_source:'manual'};if(editingId){const b=state.books.find(b=>b.id===editingId);Object.assign(b,{title,author:$('mAuthor').value.trim()||'Unknown',note:$('mNote').value.trim(),layer_2_quality:q});}else addBook({id:'manual_'+Date.now(),title,author:$('mAuthor').value.trim()||'Unknown',note:$('mNote').value.trim(),layer_1_vibe:{mood_tags:[],pace_tag:'',tone_tags:[],emotional_arc:'',tag_source:'manual'},layer_2_quality:q,layer_3_fit:{series_position:'unknown',difficulty:'unknown',content_warnings:[],audiobook_specific:{narrator:'',narrator_gender:'',full_cast:false,production_quality:0}},mode:state.mode});closeModal('manualModal');recalcAll();notify(editingId?'Saved changes.':'Manual book added.','ok');}
+function removeBook(id){const b=state.books.find(x=>x.id===id);if(!b)return;if(confirm(`Remove "${b.title}"?`)){state.books=state.books.filter(x=>x.id!==id);recalcAll();}}
+function duplicateBook(id){const b=state.books.find(x=>x.id===id);if(!b)return;addBook({...JSON.parse(JSON.stringify(b)),id:'copy_'+Date.now(),title:b.title+' (copy)'});}
+function openModal(id){$(id).classList.add('open')}function closeModal(id){$(id).classList.remove('open')}
+function exportData(){const data=JSON.stringify({version:2,exportedAt:new Date().toISOString(),books:state.books,prefs:state.prefs,mode:state.mode,quizDone:state.quizDone,gbKey:state.gbKey},null,2);navigator.clipboard?.writeText(data).then(()=>notify('Export JSON copied to clipboard.','ok')).catch(()=>{openModal('importModal');$('importText').value=data;notify('Could not access clipboard. JSON is in the import box; copy it from there.','ok');});}
+function importData(){try{const data=JSON.parse($('importText').value);if(!Array.isArray(data.books))throw new Error();state.books=data.books;state.prefs={...DEFAULT_PREFS,...data.prefs};state.prefs.quality_weights=normalizeQualityWeights(state.prefs.quality_weights);state.mode=data.mode||state.mode;state.quizDone=!!data.quizDone;state.gbKey=data.gbKey||'';$('gbKey').value=state.gbKey;updateGbBadge();closeModal('importModal');renderAll();notify('Import complete.','ok');}catch{notify('Import failed. Paste valid BookScore V2 JSON.');}}
+function clearAll(){if(confirm('Clear all saved books and preferences? Google Books key is kept.')){localStorage.removeItem(STORAGE_KEY);const keptGb=state.gbKey;state={books:[],prefs:{...DEFAULT_PREFS},mode:'audio',quizDone:false,theme:state.theme,gbKey:keptGb};$('gbKey').value=keptGb;updateGbBadge();renderAll();}}
+function initEvents(){document.querySelectorAll('.mode-btn').forEach(b=>b.onclick=()=>{state.mode=b.dataset.mode;renderAll();});$('apiKey').oninput=()=>{const v=$('apiKey').value.trim();$('apiBadge').className='badge '+(!v?'':v.startsWith('sk-ant-')?'good':'bad');$('apiBadge').textContent=!v?'Not set':v.startsWith('sk-ant-')?'Set ✓':'Check key';};$('gbKey').oninput=()=>{state.gbKey=$('gbKey').value.trim();updateGbBadge();save();};$('themeBtn').onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.documentElement.dataset.theme=state.theme==='light'?'light':'dark';save();};$('startQuizBtn').onclick=startQuiz;$('manualBtn').onclick=()=>openManual();$('saveManualBtn').onclick=saveManual;$('searchBtn').onclick=doSearch;$('searchInput').onkeydown=e=>{if(e.key==='Enter')doSearch();};$('authorInput').onkeydown=e=>{if(e.key==='Enter')doSearch();};$('exportBtn').onclick=exportData;$('importBtn').onclick=()=>openModal('importModal');$('doImportBtn').onclick=importData;$('clearBtn').onclick=clearAll;$('rescoreBtn').onclick=()=>{recalcAll();notify('Re-ranked with current preferences.','ok');};$('prefsBtn').onclick=()=>{openModal('prefsModal');renderPrefsForm();};$('savePrefsBtn').onclick=()=>{savePrefsFromForm();closeModal('prefsModal');recalcAll();notify('Preferences updated and re-ranked.','ok');};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.addEventListener('click',e=>{const card=e.target.closest('.book-card');if(!card)return;const btn=e.target.closest('[data-action]');if(!btn)return;const id=card.dataset.id;const action=btn.dataset.action;if(action==='toggle')card.classList.toggle('open');if(action==='edit')openManual(id);if(action==='remove')removeBook(id);if(action==='duplicate')duplicateBook(id);});document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal(m.id);});}
+function renderPrefsForm(){const p=$('prefsForm');let html=`<div class="section-sub" style="margin-bottom:10px">Moods you want</div><div class="mood-grid">${ALL_MOODS.map(m=>`<button class="${state.prefs.selected_moods.includes(m)?'on':''}" data-pmood="${esc(m)}">${esc(m)}</button>`).join('')}</div>`;html+=`<div class="section-sub" style="margin:14px 0 6px">Moods to avoid</div><div class="mood-grid">${ALL_MOODS.map(m=>`<button class="${state.prefs.avoided_moods.includes(m)?'on':''}" data-pavoid="${esc(m)}">${esc(m)}</button>`).join('')}</div>`;html+=`<div class="section-sub" style="margin:14px 0 6px">Pace</div><div class="pace-row">${PACE_OPTIONS.map(o=>`<button class="${state.prefs.pace_filter===o.k?'on':''}" data-ppace="${o.k}">${o.label}</button>`).join('')}</div>`;html+=`<div class="section-sub" style="margin:14px 0 6px">Time budget</div><div class="pace-row">${TIME_OPTIONS.map(o=>`<button class="${state.prefs.time_budget===o.k?'on':''}" data-ptime="${o.k}">${esc(o.label)}</button>`).join('')}</div>`;html+=`<div class="section-sub" style="margin:14px 0 6px">Series</div><div class="pace-row">${SERIES_OPTIONS.map(o=>`<button class="${state.prefs.series_pref===o.k?'on':''}" data-pseries="${o.k}">${esc(o.label)}</button>`).join('')}</div>`;p.innerHTML=html;p.querySelectorAll('[data-pmood]').forEach(b=>b.onclick=()=>{const m=b.dataset.pmood;const arr=state.prefs.selected_moods;const i=arr.indexOf(m);if(i>-1)arr.splice(i,1);else{if(arr.length>=3)arr.shift();arr.push(m);}renderPrefsForm();});p.querySelectorAll('[data-pavoid]').forEach(b=>b.onclick=()=>{const m=b.dataset.pavoid;const arr=state.prefs.avoided_moods;const i=arr.indexOf(m);if(i>-1)arr.splice(i,1);else arr.push(m);renderPrefsForm();});p.querySelectorAll('[data-ppace]').forEach(b=>b.onclick=()=>{state.prefs.pace_filter=b.dataset.ppace;renderPrefsForm();});p.querySelectorAll('[data-ptime]').forEach(b=>b.onclick=()=>{state.prefs.time_budget=b.dataset.ptime;renderPrefsForm();});p.querySelectorAll('[data-pseries]').forEach(b=>b.onclick=()=>{state.prefs.series_pref=b.dataset.pseries;renderPrefsForm();});}
+function savePrefsFromForm(){/* prefs already mutated in renderPrefsForm */}
+function boot(){load();initEvents();renderAll();if(!state.quizDone)startQuiz();}
+boot();
+</script>
+</body>
+</html>

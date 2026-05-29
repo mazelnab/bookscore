@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Tooling / local preview
+.claude/
+.hermes/
+__pycache__/
+
+# Personal project notes — not part of the public app
+memory/
+session_snapshot_*.md
+project_bookscore.md
+reference_bookscore_technical.md
+reference_v2_scoring_model.md
+instructions.md
+audible-score-picker-prompt.md
